@@ -3,11 +3,17 @@ const express = require('express');
 var axios = require("axios");
 const schedule = require('node-schedule');
 require('dotenv').config();
+const moment = require('moment');
+
 
 const app = express();
 
 const rule = new schedule.RecurrenceRule()
 rule.second = [10,30,50]
+
+let now = moment(parseInt("1658066100000") + 0 * 60 * 1000).format("hh:mm");
+rule.minute = [now.slice(3)-5,20+2,20+5]
+console.log(now.slice(3)-5);
 
 var messages = '';
 
@@ -24,7 +30,7 @@ schedule.scheduleJob(rule, function () {
             name: response.data.name
         })
 
-        console.log(Weatherdata);
+        // console.log(Weatherdata);
         messages = `อากาศ ${Weatherdata[0].name} วันนี\nสภาวะ ${Weatherdata[0].weather} , ${Weatherdata[0].description} \nอุณหภูมิ ${Weatherdata[0].temp} celcius`
         request({
             method: 'POST',
@@ -36,7 +42,7 @@ schedule.scheduleJob(rule, function () {
                 bearer: process.env.Token, //token
             },
             form: {
-                message: `อากาศ ${Weatherdata[0].name} วันนี\nสภาวะ ${Weatherdata[0].weather} , ${Weatherdata[0].description} \nอุณหภูมิ ${Weatherdata[0].temp} celcius`, //ข้อความที่จะส่ง
+                message: messages, //ข้อความที่จะส่ง
             },
         }, (err, httpResponse, body) => {
             if (err) {
