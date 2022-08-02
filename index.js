@@ -6,11 +6,12 @@ require('dotenv').config();
 
 const app = express();
 
-
+const rule = new schedule.RecurrenceRule()
+rule.second = [10,30,50]
 
 var messages = '';
 
-schedule.scheduleJob('0 9 * * *', function () {
+schedule.scheduleJob(rule, function () {
     axios.get('https://api.openweathermap.org/data/2.5/weather?q=prachin buri&appid=76a5fd9779d2cd32c52aef182e657372').then(function (response) {
         let Weatherdata = [];
 
